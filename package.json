@@ -1,0 +1,53 @@
+{
+  "type": "module",
+  "name": "a5-pii-anonymizer",
+  "version": "0.0.1",
+  "main": "main.js",
+  "description": "A short description of your app",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "exceljs": "^4.3.0",
+    "@xenova/transformers": "2.17.2",
+    "mammoth": "^1.5.2",
+    "docx": "^8.4.0",
+    "pdf-parse": "^1.1.1",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "electron": "^34.2.0",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "productName": "A5 PII Anonymizer",
+    "appId": "com.a5.piiAnonymizer",
+    "mac": {
+      "icon": "assets/icon",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "assets/icon"
+    },
+    "directories": {
+      "buildResources": "assets"
+    },
+    "files": [
+      "**/*",
+      {
+        "from": "assets",
+        "to": "assets",
+        "filter": [
+          "icon.png"
+        ]
+      }
+    ]
+  }
+}

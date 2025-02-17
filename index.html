@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A5 PII Anonymizer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="all.min.css" />
+</head>
+<body>
+
+  <!-- PRO UPGRADE CONTAINER (top-right) -->
+  <div id="pro-container" class="pro-container">
+    <button id="pro-button" class="button pro-upgrade">
+      <i class="fas fa-gem"></i> Upgrade to Pro
+    </button>
+    <!-- This link toggles either "What's Included in Pro?" or "Manage Plan" -->
+    <span id="pro-info-link" class="pro-info-link">What's Included in Pro?</span>
+  </div>
+
+  <div class="container">
+    <h1>
+      <!-- A5 logo next to text -->
+      <img src="logo.png" alt="A5" class="company-logo" />
+      PII Anonymizer
+    </h1>
+
+    <!-- Drop Zone -->
+    <div id="drop-zone" class="drop-zone">
+      <i class="fas fa-file-upload"></i>
+      <p>Drag & Drop files here or click to select</p>
+      <input
+        type="file"
+        id="file-input"
+        accept=".doc,.docx,.xls,.xlsx,.csv,.pdf,.txt"
+        multiple
+        style="display: none;"
+      />
+    </div>
+
+    <!-- Folder selection -->
+    <div class="folder-select">
+      <button id="select-folder" class="button secondary">
+        <i class="fas fa-folder"></i> Select Folder
+      </button>
+    </div>
+
+    <!-- File list preview -->
+    <div id="file-list" class="file-list hidden">
+      <ul id="files-ul"></ul>
+      <button id="clear-files" class="button secondary">
+        <i class="fas fa-times"></i> Clear Selection
+      </button>
+    </div>
+
+    <!-- Output Directory -->
+    <div class="settings-section">
+      <div class="input-group">
+        <label for="output-dir">Output Directory (Optional):</label>
+        <div class="output-dir-group">
+          <input type="text" id="output-dir" readonly />
+          <button id="select-output" class="button secondary">
+            <i class="fas fa-folder-open"></i> Select
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process Button -->
+    <button id="process-button" class="button primary" disabled>
+      <i class="fas fa-cog"></i> Anonymize Files
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress" class="progress hidden">
+      <div class="progress-bar"></div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="status hidden"></div>
+
+    <!-- Logs -->
+    <div id="log-area" class="log-area hidden">
+      <h3>Logs:</h3>
+      <div id="log-messages"></div>
+    </div>
+
+    <!-- Output Folder Link -->
+    <div id="output-link" class="output-link hidden">
+      <a id="open-output-folder" href="#">Open Output Folder</a>
+    </div>
+  </div>
+
+  <!-- MODAL: UPGRADE TO PRO -->
+  <div id="upgrade-modal" class="modal">
+    <div class="modal-content">
+      <span id="upgrade-close" class="modal-close">&times;</span>
+      <h2>Upgrade to Pro</h2>
+
+      <p>Device ID:</p>
+      <div class="device-id-container">
+        <input type="text" id="device-id-field" readonly class="device-id-field" />
+        <button id="copy-device-id" class="button tiny">Copy</button>
+      </div>
+
+      <p>Upgrade to Pro:</p>
+      <div class="centered-button">
+        <button id="upgrade-store-btn" class="button store-button wide-button">Visit Store to Upgrade</button>
+      </div>
+
+      <h3>Already have a key?</h3>
+      <input type="text" id="pro-key-input" placeholder="Enter Pro Key" class="pro-key-input" />
+      <button id="validate-key-button" class="button white-border-btn">Validate Key</button>
+
+      <!-- A message area for invalid key or success messages, displayed inside modal -->
+      <div id="key-message" class="key-message hidden"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: WHAT'S INCLUDED IN PRO? -->
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <span id="info-close" class="modal-close">&times;</span>
+      <h2>Pro Features</h2>
+      <ul>
+        <li>Lift the daily 100-file limit</li>
+        <li>Access an entity map for re-identification</li>
+        
+      </ul>
+      <p>See full details at <span id="info-store-btn" class="store-link">amicus5.com/store/pa</span></p>
+    </div>
+  </div>
+
+  <!-- MODAL: MANAGE PLAN (if user is Pro) -->
+  <div id="manage-modal" class="modal">
+    <div class="modal-content">
+      <span id="manage-close" class="modal-close">&times;</span>
+      <h2>Manage Plan</h2>
+      <p>You are currently on the Pro plan.</p>
+      <button id="downgrade-btn" class="button error-btn">Downgrade to Free</button>
+      <p style="margin-top: 10px;">
+        <span class="store-link" id="manage-store-link">Visit store</span> for more info.
+      </p>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
