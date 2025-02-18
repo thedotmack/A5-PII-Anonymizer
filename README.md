@@ -19,7 +19,7 @@ This repository provides an **Electron** desktop application for **locally anony
 ## Getting Started
 
 1. **Clone or Download** this repository.  
-2. **Acquire the Model**:  
+    - Model available here: [https://huggingface.co/iiiorg/piiranha-v1-detect-personal-information/tree/main](https://huggingface.co/iiiorg/piiranha-v1-detect-personal-information/tree/main)
    - Download the ONNX model (`.onnx` files) from our external link (not included here due to size constraints).  
    - Place it under `./models/protectai/lakshyakh93-deberta_finetuned_pii-onnx/` or as directed in `fileProcessor.js`.  
 3. **Install Dependencies**:  
