@@ -37,8 +37,7 @@ This repository provides an **Electron** desktop application for **locally anony
 5. **Build / Package** (macOS example):  
    ```bash
    npm run build:mac
-   ```  
-   (Windows packaging coming soon.)
+
 
 ### Basic Usage
 
@@ -66,7 +65,7 @@ This repository provides an **Electron** desktop application for **locally anony
 - **No Guarantee**: Even context-aware models can miss certain edge cases. Always manually review if 100% privacy is critical.  
 - **Cross-Platform**:  
   - macOS builds are tested on both M-series (ARM) and Intel.  
-  - Windows builds are planned but not fully tested.  
+  - Windows and Linux builds are also available.
 
 ## Contributing
 
