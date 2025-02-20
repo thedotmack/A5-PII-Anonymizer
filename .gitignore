@@ -1,6 +1,5 @@
 # Node modules and package manager artifacts
 /node_modules/
-/models/
 /dist/
 .pnp/
 .pnp.js
