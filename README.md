@@ -1,5 +1,8 @@
 # A5 PII Anonymizer
 
+### Built-In LLM Desktop App Preview:
+<img src="./assets/preview.gif" alt="Chrome Extension Demo Gif" style="display: block; width: 100%; max-width: none;" />
+
 This repository provides an **Electron** desktop application for **locally anonymizing documents** before sending them to advanced Large Language Models (LLMs). By stripping out personal or identifiable information using a **context-aware** model, you can safely train or query external LLMs (e.g., OpenAI’s o3 model) with minimal privacy risk.
 
 ## Motivation
