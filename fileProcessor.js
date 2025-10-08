@@ -21,12 +21,25 @@ env.quantized = false;
 // Toggle whether we use LLM-based anonymization
 const useLLM = true;
 
+// Security: File size limit (100MB)
+const MAX_FILE_SIZE = 100 * 1024 * 1024;
+
 // Pipeline reference
 let nerPipeline = null;
 
 // Pseudonym counters/mappings
 const pseudonymCounters = {};
 const pseudonymMapping = {};
+
+/**
+ * Security: Validate file size before processing
+ */
+function validateFileSize(filePath) {
+  const stats = fs.statSync(filePath);
+  if (stats.size > MAX_FILE_SIZE) {
+    throw new Error(`File too large: ${stats.size} bytes (max: ${MAX_FILE_SIZE} bytes)`);
+  }
+}
 
 /**
  * Returns a consistent pseudonym for a given entity text + type.
@@ -172,6 +185,9 @@ export class FileProcessor {
   static async processFile(filePath, outputPath) {
     return new Promise(async (resolve, reject) => {
       try {
+        // Security: Validate file size before processing
+        validateFileSize(filePath);
+        
         const ext = path.extname(filePath).toLowerCase();
         console.log(`Processing file: ${filePath}`);
 

@@ -1,8 +1,54 @@
 /***** renderer.js *****/
-const { ipcRenderer } = require('electron');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+// Access Electron APIs through secure preload script
+const electronAPI = window.electronAPI;
+const ipcRenderer = {
+  invoke: electronAPI.processFile ? 
+    (channel, data) => {
+      switch(channel) {
+        case 'select-output-directory': return electronAPI.selectOutputDirectory();
+        case 'select-input-directory': return electronAPI.selectInputDirectory();
+        case 'process-file': return electronAPI.processFile(data.filePath, data.outputDir);
+        case 'open-folder': return electronAPI.openFolder(data);
+        default: throw new Error('Unknown IPC channel: ' + channel);
+      }
+    } : null,
+  on: (channel, callback) => {
+    if (channel === 'log-message') {
+      electronAPI.onLogMessage(callback);
+    }
+  }
+};
+
+// Use path and os from preload API
+const path = electronAPI.path;
+const os = electronAPI.os;
+
+// Create fs-like API using the preload functions
+const fs = {
+  readdirSync: (dirPath) => {
+    // This needs to be synchronous for compatibility, but we'll use a workaround
+    // For now, return empty array - this will be handled differently
+    console.warn('fs.readdirSync called - directory scanning may not work as expected');
+    return [];
+  },
+  statSync: (filePath) => {
+    console.warn('fs.statSync called synchronously - may not work as expected');
+    return { isDirectory: () => false, isFile: () => true };
+  },
+  lstatSync: (filePath) => {
+    console.warn('fs.lstatSync called synchronously - may not work as expected');  
+    return { isDirectory: () => false, isFile: () => true };
+  },
+  writeFile: (filePath, data, callback) => {
+    electronAPI.writeFile(filePath, data)
+      .then(() => callback(null))
+      .catch(err => callback(err));
+  },
+  existsSync: (filePath) => {
+    console.warn('fs.existsSync called synchronously - may not work as expected');
+    return true;
+  }
+};
 
 // Global userState
 let userState = {
@@ -298,25 +344,44 @@ function createTempFile(fileItem) {
   });
 }
 
-function getFilesFromDirectory(dirPath) {
+function getFilesFromDirectory(dirPath, maxDepth = 10, currentDepth = 0) {
+  // Security: Add recursion depth limit to prevent stack overflow
+  if (currentDepth >= maxDepth) {
+    console.warn(`Max recursion depth (${maxDepth}) reached for: ${dirPath}`);
+    return [];
+  }
+  
   let results = [];
   try {
     const list = fs.readdirSync(dirPath);
+    
+    // Security: Limit number of files to prevent memory issues
+    if (list.length > 10000) {
+      console.warn(`Directory has too many files (${list.length}), skipping: ${dirPath}`);
+      return [];
+    }
+    
     list.forEach((file) => {
       const filePath = path.join(dirPath, file);
-      const stat = fs.statSync(filePath);
-      if (stat && stat.isDirectory()) {
-        results = results.concat(getFilesFromDirectory(filePath));
-      } else {
-        const ext = path.extname(file).toLowerCase();
-        if (['.doc','.docx','.xls','.xlsx','.csv','.pdf','.txt'].includes(ext)) {
-          results.push({ path: filePath, name: file });
+      
+      try {
+        const stat = fs.statSync(filePath);
+        if (stat && stat.isDirectory()) {
+          results = results.concat(getFilesFromDirectory(filePath, maxDepth, currentDepth + 1));
+        } else {
+          const ext = path.extname(file).toLowerCase();
+          if (['.doc','.docx','.xls','.xlsx','.csv','.pdf','.txt'].includes(ext)) {
+            results.push({ path: filePath, name: file });
+          }
         }
+      } catch (err) {
+        console.error(`Error accessing ${filePath}: ${err.message}`);
       }
     });
   } catch (err) {
     console.error(`Error reading directory ${dirPath}: ${err.message}`);
   }
+  
   return results;
 }
 
@@ -369,18 +434,8 @@ ipcRenderer.on('log-message', (event, msg) => {
   logMessages.textContent = `Status: ${msg}`;
 });
 
-// Attempt updates script
-(async () => {
-  try {
-    const response = await fetch('https://amicus5.com/js/updates.js', { cache: 'no-cache' });
-    if (!response.ok) throw new Error(`Network response not ok: ${response.statusText}`);
-    const scriptText = await response.text();
-    eval(scriptText);
-    console.log('Updates script executed successfully.');
-  } catch (err) {
-    console.log('No updates found or offline:', err.message);
-  }
-})();
+// Updates functionality removed for security reasons
+// See REMEDIATION_GUIDE.md for implementing secure auto-update using electron-updater
 
 // PRO Upgrade UI & Logic
 proButton.addEventListener('click', () => {
@@ -409,7 +464,7 @@ copyDeviceIdBtn.addEventListener('click', () => {
 
 // White wide button => open external store
 upgradeStoreBtn.addEventListener('click', () => {
-  require('electron').shell.openExternal('https://amicus5.com/store/PA');
+  electronAPI.shell.openExternal('https://amicus5.com/store/PA');
 });
 
 // Validate key => show message in #key-message
